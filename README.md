@@ -1,9 +1,5 @@
 # .config
-![des](https://github.com/YehorStanislavskyi/dotfiles/blob/main/screenshots/photo_2023-01-14_19-29-56.jpg/)
-
 файлы конфигураци
-
-
 
 ## установка  i3gaps
 
