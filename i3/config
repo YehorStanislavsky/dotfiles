@@ -1,26 +1,51 @@
-# переменные 
-set $mod mod4
-set $alt mod1
-set $dunstify notify-send
-gaps inner 8
+### vars ### 
+set $mod Mod4
+set $alt Mod1
+set $dunstify dunstify -t 900
+set $ws1 "1: 1  "
+set $ws2 "2: 2  "
+set $ws3 "3: 3  "
+set $ws4 "4: 4  "
+set $ws5 "5: 5  "
+set $ws6 "6: 6  "
+set $ws7 "7: 7 "
+set $ws8 "8: 8 "
 
-# запуск аплетов 
+## autostart ##
+exec_always --no-startup-id ~/.config/polybar/launch.sh &
 exec_always nm-applet
 exec_always blueman-applet 
-exec --no-startup-id hsetroot -solid "#1E1F29"
-
-# смена раскладки с помощью капса. Стандартные функции капса на shift+caps
+exec --no-startup-id feh --bg-fill '/home/yehor/Pictures/wallpaper.png' 
+exec dunst & 
 exec_always "setxkbmap -model pc104 -layout us,ru -variant -option grp:caps_toggle"
+exec --no-startup-id i3-msg "workspace 6; layout tabbed"
+### windows rules ###
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="bubble"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_role="Preferences"] floating enable
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
+for_window [class=".*"] border pixel 2 
 
-# гапсы 
+
+assign [class="kitty"] → $ws1
+assign [class="firefox"] → $ws2
+assign [class="^(|TelegramDesktop|discord)$"] → $ws3
+assign [class="steam"] → $ws4
+assign [class="Code"] → $ws5
+assign [class="^(|google-chrome|Google-chrome|Slack)$"] → $ws6
+
+# запуск аплетов
 default_border pixel 0
+gaps inner 3
 default_floating_border normal
-
-# шрифт самого i3. Не юзается, но удалять не стоит. 
-font pango:DejaVu Sans Mono 8
+font pango:DejaVu Sans Mono 12
 
 # исполььзовать мышку + мод для перетаскивания плавающих окнон
 floating_modifier $mod
+
+### Keyboard binds ###
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -35,7 +60,6 @@ bindsym $mod+Shift+Return exec gnome-terminal
 bindsym $mod+Shift+q kill
 
 # изменить контейнер слоя (стак, таб, сплит убрать)
-bindsym $mod+s layout stacking exec $dunstify "stacking"
 bindsym $mod+w layout tabbed exec $dunstify "tabbed"
 bindsym $mod+e layout toggle split exec $dunstify "default"
 
@@ -58,18 +82,10 @@ bindsym $mod+h split h  exec $dunstify 'split in horizontal orientation'
 
 # split in vertical orientation
 bindsym $mod+v split v exec $dunstify 'split in vertical orientation'
+
 # навигация между тэгами
 bindsym $mod+Ctrl+Right workspace next
 bindsym $mod+Ctrl+Left workspace prev
-
-set $ws1 1
-set $ws2 2
-set $ws3 3
-set $ws4 4
-set $ws5 5
-set $ws6 6
-set $ws7 7
-set $ws8 8
 
 # перемещение между тэгами
 bindsym $mod+1 workspace $ws1
@@ -107,6 +123,15 @@ bindsym $mod+Ctrl+Shift+Right move workspace to output right
 bindsym $mod+Ctrl+Shift+Up move workspace to output up
 bindsym $mod+Ctrl+Shift+Down move workspace to output down
 
+# Make the currently focused window a scratchpad
+
+bindsym $mod+Tab focus next
+bindsym $mod+Shift+Tab focus prev
+
+# Show the first scratchpad window
+bindsym $mod+minus scratchpad show
+bindsym $mod+Shift+minus move scratchpad
+
 # перезагрузить конфиг
 bindsym $mod+Shift+r restart exec $dunstify 'reloaded'  
 
@@ -136,38 +161,18 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-exec_always --no-startup-id ~/.config/polybar/launch.sh &
-
-for_window [class=".*"] border pixel 2 
-
-for_window [class="Blueman-manager"] floating enable, resize set 600px 500px
-
-for_window [class="Mumble"] floating enable, resize set 400px 300px, move right -1px,move down 210px
-
-bindsym $mod+Shift+p exec ~/scripts/rofi_power_menu.sh
-
-# яркость экрана ноута
 bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5%
-
 bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
 
 # громкость звука
-bindcode 123 exec amixer -D pulse sset Master on 5%+ > /dev/null 
-bindcode 122 exec amixer -D pulse sset Master on 5%- > /dev/null 
+bindsym XF86AudioRaiseVolume exec pamixer --increase 5 > /dev/null 
+bindsym XF86AudioLowerVolume exec pamixer --decrease 5 > /dev/null 
+bindsym XF86AudioMute exec pamixer --toggle-mute > /dev/null
 
-bindsym XF86AudioMute exec amixer -D pulse set Master 1+ toggle > /dev/null
-
-exec_always --no-startup-id conky
-# запуск меню смены режима дисплея
-bindsym $mod+shift+d exec ~/scripts/display.sh &
-
-# локскрин + сон 
-bindsym $mod+Control+l exec betterlockscreen -l &&  systemctl suspend 
 # локскрин 
 bindsym $mod+l exec betterlockscreen -l 
 
 ## скриншотилка
 bindsym Print exec --no-startup-id maim --select | xclip -selection clipboard -t image/png && $dunstify 'select screenshot copy'
 bindsym Control+Print exec --no-startup-id maim | xclip -selection clipboard -t image/png && $dunstify 'full display screenshot copy'
-
 bindsym $mod+Print exec --no-startup-id maim --select ~/Pictures/Screenshots/$(date +%s).png | xclip -selection clipboard -t image/png && $dunstify 'select screenshot save'
