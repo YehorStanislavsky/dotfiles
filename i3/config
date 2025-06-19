@@ -27,7 +27,7 @@ for_window [window_role="Preferences"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 for_window [class=".*"] border pixel 2 
-
+for_window [instance="floater"] floating enable, resize set 40 ppt 30 ppt, move position center
 
 assign [class="kitty"] → $ws1
 assign [class="firefox"] → $ws2
@@ -37,10 +37,16 @@ assign [class="Code"] → $ws5
 assign [class="^(|google-chrome|Google-chrome|Slack)$"] → $ws6
 
 # запуск аплетов
+### appearance ###
 default_border pixel 0
 gaps inner 3
 default_floating_border normal
 font pango:DejaVu Sans Mono 12
+
+client.focused          #b58900 #073642 #ffffff #b58900 #586e75
+client.unfocused        #00212b #00212b #586e75 #001e26 #001e26
+client.focused_inactive #00212b #00212b #586e75 #001e26 #001e26
+client.urgent           #dc322f #002b36 #ffffff #dc322f #002b36
 
 # исполььзовать мышку + мод для перетаскивания плавающих окнон
 floating_modifier $mod
@@ -52,14 +58,11 @@ bindsym $mod+Shift+space floating toggle
 
 # запуск терминала для обычных задач
 bindsym $mod+Return exec kitty
-
-# запуск терминала гном для ssh 
-bindsym $mod+Shift+Return exec gnome-terminal
-
+bindsym $mod+Shift+Return exec --no-startup-id kitty --class floater
 # закрыть окно
 bindsym $mod+Shift+q kill
 
-# изменить контейнер слоя (стак, таб, сплит убрать)
+# изменить контейнер слоя (тайлинг, таб)
 bindsym $mod+w layout tabbed exec $dunstify "tabbed"
 bindsym $mod+e layout toggle split exec $dunstify "default"
 
