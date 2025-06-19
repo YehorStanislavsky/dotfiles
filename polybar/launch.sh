@@ -1,13 +1,16 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-# Terminate already running bar instances
+# Убиваем все запущенные бары
 killall -q polybar
 
-# Wait until the processes have been shut down
-while pgrep -x polybar >/dev/null; do sleep 1; done
+# Ждём завершения
+while pgrep -x polybar >/dev/null; do sleep 0.5; done
 
-# Launch
-polybar --config=~/.config/polybar/config.ini main &
-
-polybar --config=~/.config/polybar/config.ini bottom ;
-echo "Bar launched..."
+# Запускаем бар для каждого монитора
+if type "xrandr" > /dev/null; then
+  for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
+    MONITOR=$m polybar main &  # замените `mybar` на название вашей секции [bar/mybar]
+  done
+else
+  polybar mybar &
+fi
